@@ -1,0 +1,57 @@
+#!/bin/bash
+ 
+### BEGIN INIT INFO
+# Provides:          [SO2]Tarea3_201122911
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Inicia y detiene mi servicio
+# Description:       Tarea 3 Sistemas Operativos 2 - 201122911 - Mario Morales
+### END INIT INFO
+
+
+# Dependiento del parametro que se le pase
+#start - stop - restart ejecuta la función correspondiente.
+
+rutaArchivo=/home/Tarea3_201122911/pidServidor.txt
+touch $rutaArchivo
+
+case "$1" in
+start)
+ 	echo "Iniciando Demonio SO2-Tarea3"
+	python /home/Tarea3_201122911/ServidorHttp.py &
+	PID=$! #obtiene el PID del ultimo comando ejecutado (servidor)
+	echo "id proceso servidor http -> $PID"
+	#escribe el PID del servidor en el archivo
+	echo $PID > $rutaArchivo
+	echo
+ ;;
+stop)
+	echo "Deteniendo Demonio SO2-Tarea3"
+	PID=$(cat $rutaArchivo)
+	echo "id proceso servidor http -> $PID"
+	kill $PID
+	echo
+ ;;
+restart)
+	echo "Deteniendo Demonio SO2-Tarea3: "
+	PID=$(cat $rutaArchivo)
+	echo "id proceso servidor http -> $PID"
+	kill $PID
+	echo
+
+	sleep 3
+
+	echo "Iniciando Demonio SO2-Tarea3: "
+	python /home/Tarea3_201122911/ServidorHttp.py &
+	PID=$! #obtiene el PID del ultimo comando ejecutado (servidor)
+	echo "id proceso servidor http -> $PID"
+	echo
+ ;;
+*)
+ echo $"Usar: $0 {start|stop|restart}"
+ exit 1
+esac
+ 
+exit 0
